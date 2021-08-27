@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let ativo = false
         const usarBorracha = document.getElementById("borracha").checked
         if (usarBorracha) {
-            document.querySelector("#camadaPincel").style.zIndex = "5"
+            document.querySelector("#camadaPincel").style.zIndex = "6"
             document.querySelector("#configBtn").disabled = false
             document.querySelector("#saveBtn").disabled = false
             ativo = true
