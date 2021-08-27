@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const faces = [{
         1: 'Lingual / Palatal'
     }, {
-        2: 'Mesail'
+        2: 'Mesial'
     }, {
         3: 'Vestibular'
     }, {
@@ -109,10 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.informacoesAdicionais = informacoesAdicionais;
         }
         valido() {
-            if (this.nome === null || this.nome === undefined || this.nome === '') return false
-            if (this.cor === null || this.cor === undefined || this.cor === '') return false
-            if (this.numeroDente === null || this.numeroDente === undefined || this.numeroDente === '') return false
-            if (this.faceDente === null || this.faceDente === undefined || this.faceDente === '') return false
+            if (!this.nome || !this.cor || !this.numeroDente || !this.faceDente) return false
             return true
         }
         criaObjeto() {
@@ -137,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (marcacao === undefined) marcacoes.push(this.criaObjeto())
                 else marcacoes[marcacoes.indexOf(marcacao)] = this.criaObjeto()
                 storage.save(marcacoes)
-            }
+            } else alert('Erro! Campos não preenchidos ou valores inválidos!!!')
         }
         remover() {
             marcacoes.splice(marcacoes.indexOf(this.criaObjeto()), 1)
@@ -543,7 +540,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isNaN(numDente)) {
             document.getElementById('modalLabel').innerText = `Marcações - Dente ${numDente}`
             document.getElementById('numeroDente').value = numDente
-            // desenharDenteRepresentativo()
             modal.show()
             atualizaTabela(numDente)
         }
@@ -717,7 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Pinta a face do dente de acordo com o Marcacao adicionado.
+     * Pinta a face do dente de acordo com o Marcacao adicionada.
      * 
      * @example 
      *   pintarFace(contexto, Marcacao, 'black', 'yellow')
@@ -1600,166 +1596,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var t85_text = paper.text(72, 213, "85");
 
-    /*Attributes*/
-    tooth_11.attr({
-        fill: '#fff'
-    });
-    tooth_12.attr({
-        fill: '#fff'
-    });
-    tooth_13.attr({
-        fill: '#fff'
-    });
-    tooth_14.attr({
-        fill: '#fff'
-    });
-    tooth_15.attr({
-        fill: '#fff'
-    });
-    tooth_16.attr({
-        fill: '#fff'
-    });
-    tooth_17.attr({
-        fill: '#fff'
-    });
-    tooth_18.attr({
-        fill: '#fff'
-    });
-    tooth_21.attr({
-        fill: '#fff'
-    });
-    tooth_22.attr({
-        fill: '#fff'
-    });
-    tooth_23.attr({
-        fill: '#fff'
-    });
-    tooth_24.attr({
-        fill: '#fff'
-    });
-    tooth_25.attr({
-        fill: '#fff'
-    });
-    tooth_26.attr({
-        fill: '#fff'
-    });
-    tooth_27.attr({
-        fill: '#fff'
-    });
-    tooth_28.attr({
-        fill: '#fff'
-    });
-    tooth_31.attr({
-        fill: '#fff'
-    });
-    tooth_32.attr({
-        fill: '#fff'
-    });
-    tooth_33.attr({
-        fill: '#fff'
-    });
-    tooth_34.attr({
-        fill: '#fff'
-    });
-    tooth_35.attr({
-        fill: '#fff'
-    });
-    tooth_36.attr({
-        fill: '#fff'
-    });
-    tooth_37.attr({
-        fill: '#fff'
-    });
-    tooth_38.attr({
-        fill: '#fff'
-    });
-    tooth_41.attr({
-        fill: '#fff'
-    });
-    tooth_42.attr({
-        fill: '#fff'
-    });
-    tooth_43.attr({
-        fill: '#fff'
-    });
-    tooth_44.attr({
-        fill: '#fff'
-    });
-    tooth_45.attr({
-        fill: '#fff'
-    });
-    tooth_46.attr({
-        fill: '#fff'
-    });
-    tooth_47.attr({
-        fill: '#fff'
-    });
-    tooth_48.attr({
-        fill: '#fff'
-    });
-    tooth_51.attr({
-        fill: '#fff'
-    });
-    tooth_52.attr({
-        fill: '#fff'
-    });
-    tooth_53.attr({
-        fill: '#fff'
-    });
-    tooth_54.attr({
-        fill: '#fff'
-    });
-    tooth_55.attr({
-        fill: '#fff'
-    });
-    tooth_61.attr({
-        fill: '#fff'
-    });
-    tooth_62.attr({
-        fill: '#fff'
-    });
-    tooth_63.attr({
-        fill: '#fff'
-    });
-    tooth_64.attr({
-        fill: '#fff'
-    });
-    tooth_65.attr({
-        fill: '#fff'
-    });
-    tooth_71.attr({
-        fill: '#fff'
-    });
-    tooth_72.attr({
-        fill: '#fff'
-    });
-    tooth_73.attr({
-        fill: '#fff'
-    });
-    tooth_74.attr({
-        fill: '#fff'
-    });
-    tooth_75.attr({
-        fill: '#fff'
-    });
-    tooth_81.attr({
-        fill: '#fff'
-    });
-    tooth_82.attr({
-        fill: '#fff'
-    });
-    tooth_83.attr({
-        fill: '#fff'
-    });
-    tooth_84.attr({
-        fill: '#fff'
-    });
-    tooth_85.attr({
-        fill: '#fff'
-    });
-
-    var oldFillColor;
-
     /*Functions*/
     function f_onmouseover(tooth, tooth_text) {
         tooth.node.style.cursor = 'pointer';
@@ -1782,376 +1618,6 @@ document.addEventListener('DOMContentLoaded', () => {
             "font-weight": 'normal'
         });
     }
-
-    tooth_11.node.onmouseover = function() {
-        f_onmouseover(tooth_11, t11_text);
-    }
-    tooth_11.node.onmouseout = function() {
-        f_onmouseout(tooth_11, t11_text);
-    }
-
-    tooth_12.node.onmouseover = function() {
-        f_onmouseover(tooth_12, t12_text);
-    }
-    tooth_12.node.onmouseout = function() {
-        f_onmouseout(tooth_12, t12_text);
-    }
-
-    tooth_13.node.onmouseover = function() {
-        f_onmouseover(tooth_13, t13_text);
-    }
-    tooth_13.node.onmouseout = function() {
-        f_onmouseout(tooth_13, t13_text);
-    }
-
-    tooth_14.node.onmouseover = function() {
-        f_onmouseover(tooth_14, t14_text);
-    }
-    tooth_14.node.onmouseout = function() {
-        f_onmouseout(tooth_14, t14_text);
-    }
-
-    tooth_15.node.onmouseover = function() {
-        f_onmouseover(tooth_15, t15_text);
-    }
-    tooth_15.node.onmouseout = function() {
-        f_onmouseout(tooth_15, t15_text);
-    }
-
-    tooth_16.node.onmouseover = function() {
-        f_onmouseover(tooth_16, t16_text);
-    }
-    tooth_16.node.onmouseout = function() {
-        f_onmouseout(tooth_16, t16_text);
-    }
-
-    tooth_17.node.onmouseover = function() {
-        f_onmouseover(tooth_17, t17_text);
-    }
-    tooth_17.node.onmouseout = function() {
-        f_onmouseout(tooth_17, t17_text);
-    }
-
-    tooth_18.node.onmouseover = function() {
-        f_onmouseover(tooth_18, t18_text);
-    }
-    tooth_18.node.onmouseout = function() {
-        f_onmouseout(tooth_18, t18_text);
-    }
-
-    tooth_21.node.onmouseover = function() {
-        f_onmouseover(tooth_21, t21_text);
-    }
-    tooth_21.node.onmouseout = function() {
-        f_onmouseout(tooth_21, t21_text);
-    }
-
-    tooth_22.node.onmouseover = function() {
-        f_onmouseover(tooth_22, t22_text);
-    }
-    tooth_22.node.onmouseout = function() {
-        f_onmouseout(tooth_22, t22_text);
-    }
-
-    tooth_23.node.onmouseover = function() {
-        f_onmouseover(tooth_23, t23_text);
-    }
-    tooth_23.node.onmouseout = function() {
-        f_onmouseout(tooth_23, t23_text);
-    }
-
-    tooth_24.node.onmouseover = function() {
-        f_onmouseover(tooth_24, t24_text);
-    }
-    tooth_24.node.onmouseout = function() {
-        f_onmouseout(tooth_24, t24_text);
-    }
-
-    tooth_25.node.onmouseover = function() {
-        f_onmouseover(tooth_25, t25_text);
-    }
-    tooth_25.node.onmouseout = function() {
-        f_onmouseout(tooth_25, t25_text);
-    }
-
-    tooth_26.node.onmouseover = function() {
-        f_onmouseover(tooth_26, t26_text);
-    }
-    tooth_26.node.onmouseout = function() {
-        f_onmouseout(tooth_26, t26_text);
-    }
-
-    tooth_27.node.onmouseover = function() {
-        f_onmouseover(tooth_27, t27_text);
-    }
-    tooth_27.node.onmouseout = function() {
-        f_onmouseout(tooth_27, t27_text);
-    }
-
-    tooth_28.node.onmouseover = function() {
-        f_onmouseover(tooth_28, t28_text);
-    }
-    tooth_28.node.onmouseout = function() {
-        f_onmouseout(tooth_28, t28_text);
-    }
-
-    tooth_31.node.onmouseover = function() {
-        f_onmouseover(tooth_31, t31_text);
-    }
-    tooth_31.node.onmouseout = function() {
-        f_onmouseout(tooth_31, t31_text);
-    }
-
-    tooth_32.node.onmouseover = function() {
-        f_onmouseover(tooth_32, t32_text);
-    }
-    tooth_32.node.onmouseout = function() {
-        f_onmouseout(tooth_32, t32_text);
-    }
-
-    tooth_33.node.onmouseover = function() {
-        f_onmouseover(tooth_33, t33_text);
-    }
-    tooth_33.node.onmouseout = function() {
-        f_onmouseout(tooth_33, t33_text);
-    }
-
-    tooth_34.node.onmouseover = function() {
-        f_onmouseover(tooth_34, t34_text);
-    }
-    tooth_34.node.onmouseout = function() {
-        f_onmouseout(tooth_34, t34_text);
-    }
-
-    tooth_35.node.onmouseover = function() {
-        f_onmouseover(tooth_35, t35_text);
-    }
-    tooth_35.node.onmouseout = function() {
-        f_onmouseout(tooth_35, t35_text);
-    }
-
-    tooth_36.node.onmouseover = function() {
-        f_onmouseover(tooth_36, t36_text);
-    }
-    tooth_36.node.onmouseout = function() {
-        f_onmouseout(tooth_36, t36_text);
-    }
-
-    tooth_37.node.onmouseover = function() {
-        f_onmouseover(tooth_37, t37_text);
-    }
-    tooth_37.node.onmouseout = function() {
-        f_onmouseout(tooth_37, t37_text);
-    }
-
-    tooth_38.node.onmouseover = function() {
-        f_onmouseover(tooth_38, t38_text);
-    }
-    tooth_38.node.onmouseout = function() {
-        f_onmouseout(tooth_38, t38_text);
-    }
-
-    tooth_41.node.onmouseover = function() {
-        f_onmouseover(tooth_41, t41_text);
-    }
-    tooth_41.node.onmouseout = function() {
-        f_onmouseout(tooth_41, t41_text);
-    }
-
-    tooth_42.node.onmouseover = function() {
-        f_onmouseover(tooth_42, t42_text);
-    }
-    tooth_42.node.onmouseout = function() {
-        f_onmouseout(tooth_42, t42_text);
-    }
-
-    tooth_43.node.onmouseover = function() {
-        f_onmouseover(tooth_43, t43_text);
-    }
-    tooth_43.node.onmouseout = function() {
-        f_onmouseout(tooth_43, t43_text);
-    }
-
-    tooth_44.node.onmouseover = function() {
-        f_onmouseover(tooth_44, t44_text);
-    }
-    tooth_44.node.onmouseout = function() {
-        f_onmouseout(tooth_44, t44_text);
-    }
-
-    tooth_45.node.onmouseover = function() {
-        f_onmouseover(tooth_45, t45_text);
-    }
-    tooth_45.node.onmouseout = function() {
-        f_onmouseout(tooth_45, t45_text);
-    }
-
-    tooth_46.node.onmouseover = function() {
-        f_onmouseover(tooth_46, t46_text);
-    }
-    tooth_46.node.onmouseout = function() {
-        f_onmouseout(tooth_46, t46_text);
-    }
-
-    tooth_47.node.onmouseover = function() {
-        f_onmouseover(tooth_47, t47_text);
-    }
-    tooth_47.node.onmouseout = function() {
-        f_onmouseout(tooth_47, t47_text);
-    }
-
-    tooth_48.node.onmouseover = function() {
-        f_onmouseover(tooth_48, t48_text);
-    }
-    tooth_48.node.onmouseout = function() {
-        f_onmouseout(tooth_48, t48_text);
-    }
-
-    tooth_51.node.onmouseover = function() {
-        f_onmouseover(tooth_51, t51_text);
-    }
-    tooth_51.node.onmouseout = function() {
-        f_onmouseout(tooth_51, t51_text);
-    }
-
-    tooth_52.node.onmouseover = function() {
-        f_onmouseover(tooth_52, t52_text);
-    }
-    tooth_52.node.onmouseout = function() {
-        f_onmouseout(tooth_52, t52_text);
-    }
-
-    tooth_53.node.onmouseover = function() {
-        f_onmouseover(tooth_53, t53_text);
-    }
-    tooth_53.node.onmouseout = function() {
-        f_onmouseout(tooth_53, t53_text);
-    }
-
-    tooth_54.node.onmouseover = function() {
-        f_onmouseover(tooth_54, t54_text);
-    }
-    tooth_54.node.onmouseout = function() {
-        f_onmouseout(tooth_54, t54_text);
-    }
-
-    tooth_55.node.onmouseover = function() {
-        f_onmouseover(tooth_55, t55_text);
-    }
-    tooth_55.node.onmouseout = function() {
-        f_onmouseout(tooth_55, t55_text);
-    }
-
-    tooth_61.node.onmouseover = function() {
-        f_onmouseover(tooth_61, t61_text);
-    }
-    tooth_61.node.onmouseout = function() {
-        f_onmouseout(tooth_61, t61_text);
-    }
-
-    tooth_62.node.onmouseover = function() {
-        f_onmouseover(tooth_62, t62_text);
-    }
-    tooth_62.node.onmouseout = function() {
-        f_onmouseout(tooth_62, t62_text);
-    }
-
-    tooth_63.node.onmouseover = function() {
-        f_onmouseover(tooth_63, t63_text);
-    }
-    tooth_63.node.onmouseout = function() {
-        f_onmouseout(tooth_63, t63_text);
-    }
-
-    tooth_64.node.onmouseover = function() {
-        f_onmouseover(tooth_64, t64_text);
-    }
-    tooth_64.node.onmouseout = function() {
-        f_onmouseout(tooth_64, t64_text);
-    }
-
-    tooth_65.node.onmouseover = function() {
-        f_onmouseover(tooth_65, t65_text);
-    }
-    tooth_65.node.onmouseout = function() {
-        f_onmouseout(tooth_65, t65_text);
-    }
-
-    tooth_71.node.onmouseover = function() {
-        f_onmouseover(tooth_71, t71_text);
-    }
-    tooth_71.node.onmouseout = function() {
-        f_onmouseout(tooth_71, t71_text);
-    }
-
-    tooth_72.node.onmouseover = function() {
-        f_onmouseover(tooth_72, t72_text);
-    }
-    tooth_72.node.onmouseout = function() {
-        f_onmouseout(tooth_72, t72_text);
-    }
-
-    tooth_73.node.onmouseover = function() {
-        f_onmouseover(tooth_73, t73_text);
-    }
-    tooth_73.node.onmouseout = function() {
-        f_onmouseout(tooth_73, t73_text);
-    }
-
-    tooth_74.node.onmouseover = function() {
-        f_onmouseover(tooth_74, t74_text);
-    }
-    tooth_74.node.onmouseout = function() {
-        f_onmouseout(tooth_74, t74_text);
-    }
-
-    tooth_75.node.onmouseover = function() {
-        f_onmouseover(tooth_75, t75_text);
-    }
-    tooth_75.node.onmouseout = function() {
-        f_onmouseout(tooth_75, t75_text);
-    }
-
-    tooth_81.node.onmouseover = function() {
-        f_onmouseover(tooth_81, t81_text);
-    }
-    tooth_81.node.onmouseout = function() {
-        f_onmouseout(tooth_81, t81_text);
-    }
-
-    tooth_82.node.onmouseover = function() {
-        f_onmouseover(tooth_82, t82_text);
-    }
-    tooth_82.node.onmouseout = function() {
-        f_onmouseout(tooth_82, t82_text);
-    }
-
-    tooth_83.node.onmouseover = function() {
-        f_onmouseover(tooth_83, t83_text);
-    }
-    tooth_83.node.onmouseout = function() {
-        f_onmouseout(tooth_83, t83_text);
-    }
-
-    tooth_84.node.onmouseover = function() {
-        f_onmouseover(tooth_84, t84_text);
-    }
-    tooth_84.node.onmouseout = function() {
-        f_onmouseout(tooth_84, t84_text);
-    }
-
-    tooth_85.node.onmouseover = function() {
-        f_onmouseover(tooth_85, t85_text);
-    }
-    tooth_85.node.onmouseout = function() {
-        f_onmouseout(tooth_85, t85_text);
-    }
-
-
-
-
-
-
 
     const dentesArcada = [{
             'dente': tooth_18,
@@ -2216,8 +1682,92 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             'dente': tooth_28,
             'texto': t28_text
+        },
+        {
+            'dente': tooth_48,
+            'texto': t48_text
+        },
+        {
+            'dente': tooth_47,
+            'texto': t47_text
+        },
+        {
+            'dente': tooth_46,
+            'texto': t46_text
+        },
+        {
+            'dente': tooth_45,
+            'texto': t45_text
+        },
+        {
+            'dente': tooth_44,
+            'texto': t44_text
+        },
+        {
+            'dente': tooth_43,
+            'texto': t43_text
+        },
+        {
+            'dente': tooth_42,
+            'texto': t42_text
+        },
+        {
+            'dente': tooth_41,
+            'texto': t41_text
+        },
+        {
+            'dente': tooth_31,
+            'texto': t31_text
+        },
+        {
+            'dente': tooth_32,
+            'texto': t32_text
+        },
+        {
+            'dente': tooth_33,
+            'texto': t33_text
+        },
+        {
+            'dente': tooth_34,
+            'texto': t34_text
+        },
+        {
+            'dente': tooth_35,
+            'texto': t35_text
+        },
+        {
+            'dente': tooth_36,
+            'texto': t36_text
+        },
+        {
+            'dente': tooth_37,
+            'texto': t37_text
+        },
+        {
+            'dente': tooth_38,
+            'texto': t38_text
         }
     ]
 
+    dentesArcada.forEach(denteArcada => {
+        denteArcada['dente'].attr({
+            fill: '#fff'
+        });
 
+        denteArcada['dente'].node.onmouseout = function() {
+            f_onmouseout(denteArcada['dente'], denteArcada['texto']);
+            contexto3.clearRect(0, 0, camada3.width, camada3.height)
+        }
+        denteArcada['dente'].node.onmouseover = function() {
+            f_onmouseover(denteArcada['dente'], denteArcada['texto']);
+            realcarDente(contexto3, parseInt(denteArcada['texto'][0].textContent))
+        }
+        denteArcada['dente'].node.onclick = function() {
+            const numDente = parseInt(denteArcada['texto'][0].textContent)
+            document.getElementById('modalLabel').innerText = `Marcações - Dente ${numDente}`
+            document.getElementById('numeroDente').value = numDente
+            modal.show()
+            atualizaTabela(numDente)
+        }
+    })
 })
