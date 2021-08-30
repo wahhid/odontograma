@@ -6,7 +6,6 @@ O odontograma está organizado em camadas:
     camada3: Camada onde é feito o 'highlight' ao passou o mouse sobre algun dente.
     camada4: Camada onde são feitas as interações com o mouse.
     camadaPincel: Camada onde são feitos os desenhos utilizando o pincel.
-    canvasRF: Camada onde é realizada a seleção da face dentária.
 
 O representação das faces dos dentes ocorre pelo desenho de 4 trapézio, que em conjunto formam as 5 faces do dente.
 
@@ -199,6 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * 
      * @param   {Number} posicaoX      Parâmetro obrigatório
      * @param   {Number} posicaoY      Parâmetro obrigatório
+     * @param   {Object} contexto      Parâmetro opcional
      */
     const desenharDente = (posicaoX, posicaoY, contexto) => {
         contexto = contexto || contexto1
@@ -930,6 +930,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             }
         }
+
+        const dente = getOrdemExibicaoPorNumeroDente(marcacao.numeroDente) - 1
+        const denteArcada = dentesArcada[dente]
+        pintarDenteMarcadoArcada(denteArcada)
     }
 
     /**
@@ -975,6 +979,14 @@ document.addEventListener('DOMContentLoaded', () => {
             baseMenor: (tamanhoDente / 4) * 3
         }
 
+        let v1 = 290 - (camada1.width * 290) / tamanhoTelaReferencia
+        let v2 = 370 - (camada1.height * 370) / tamanhoTelaReferencia
+
+        const svg = document.querySelector("#canvas_container svg")
+        // if (svg) {
+        //     svg.setAttribute('viewBox', `0 0 ${v1} ${v2}`)
+        // }
+
         exibeMarcacoes()
         exibirEstrutura()
     }
@@ -983,6 +995,12 @@ document.addEventListener('DOMContentLoaded', () => {
      * Exibe todos os marcacoes adicionados nos respectivos dentes e faces
      */
     const exibeMarcacoes = () => {
+        oldFillColor: '#fff'
+        dentesArcada.forEach(denteArcada => {
+            denteArcada['dente'].attr({
+                fill: '#fff'
+            });
+        })
         marcacoes.forEach(element => {
             pintarFace(contexto2, element, 'black', element.cor)
         });
@@ -1067,7 +1085,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * @returns {Number}
      */
     const getOrdemExibicaoPorNumeroDente = (numero) => {
-        return numeroDenteXOrdemExibicaoDente[numero] + 1
+        return numeroDenteXOrdemExibicaoDente[parseInt(numero)] + 1
     }
 
     /**
@@ -1100,8 +1118,6 @@ document.addEventListener('DOMContentLoaded', () => {
         resizeCanvas()
         resizeCanvasPincel()
     })
-
-    iniciaOdontograma()
 
     Object.prototype.isEmpty = function() {
         for (var key in this) {
@@ -1596,6 +1612,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var t85_text = paper.text(72, 213, "85");
 
+    let oldFillColor;
+
+    let dentesMarcadosArcada = []
+
     /*Functions*/
     function f_onmouseover(tooth, tooth_text) {
         tooth.node.style.cursor = 'pointer';
@@ -1609,9 +1629,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function pintarDenteMarcadoArcada(tooth) {
+        const exists = dentesMarcadosArcada.find(dente => dente === tooth) !== undefined
+        if (!exists) dentesMarcadosArcada.push(dentesMarcadosArcada)
+        oldFillColor = 'turquoise'
+        tooth['dente'].attr({
+            fill: 'turquoise'
+        });
+    }
+
     function f_onmouseout(tooth, tooth_text) {
         tooth.attr({
-            fill: '#ffffff'
+            fill: oldFillColor
         });
         tooth_text.attr({
             fill: '#000',
@@ -1770,4 +1799,8 @@ document.addEventListener('DOMContentLoaded', () => {
             atualizaTabela(numDente)
         }
     })
+    document.querySelector("#canvas_container svg").setAttribute('preserveAspectRatio', 'xMidYMid meet')
+    document.querySelector("#canvas_container svg").setAttribute('viewBox', '0 0 290 370')
+
+    iniciaOdontograma()
 })
