@@ -108,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
             this.informacoesAdicionais = informacoesAdicionais;
         }
         valido() {
-            if (!this.nome || !this.cor || !this.numeroDente || !this.faceDente) return false
-            return true
+            const EInteiro = marcacoesDenteInteiro.find(mcc => mcc === this.nome) !== undefined
+            return !(!this.nome || !this.cor || !this.numeroDente || (!EInteiro && !this.face));
         }
         criaObjeto() {
             return {
@@ -129,11 +129,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         salvar() {
             if (this.valido()) {
+                const EInteiro = marcacoesDenteInteiro.find(mcc => mcc === this.nome) !== undefined
+                if (EInteiro && !window.confirm("Realizar esta ação implica em remover todos os outros procedimento já adicionados neste dente. Deseja continuar?")) return
+                if (EInteiro) {
+                    const mccs = marcacoes.filter(prc => prc.numeroDente === this.numeroDente)
+                    mccs.forEach(mcc => {
+                        marcacoes.splice(marcacoes.indexOf(mcc), 1)
+                        storage.save(marcacoes)
+                    })
+                }
                 const marcacao = marcacoes.find(prc => prc.nome === this.nome && prc.numeroDente === this.numeroDente && prc.faceDente === this.faceDente)
                 if (marcacao === undefined) marcacoes.push(this.criaObjeto())
                 else marcacoes[marcacoes.indexOf(marcacao)] = this.criaObjeto()
                 storage.save(marcacoes)
+                return true
             } else alert('Erro! Campos não preenchidos ou valores inválidos!!!')
+            return false
         }
         remover() {
             marcacoes.splice(marcacoes.indexOf(this.criaObjeto()), 1)
@@ -540,8 +551,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isNaN(numDente)) {
             document.getElementById('modalLabel').innerText = `Marcações - Dente ${numDente}`
             document.getElementById('numeroDente').value = numDente
+            habilitarCamposMarcacao(numDente)
             modal.show()
             atualizaTabela(numDente)
+        }
+    }
+
+
+    /**
+     * Habilita ou não os campos referentes a marcação
+     */
+    const habilitarCamposMarcacao = (numeroDente) => {
+        const marcacao = marcacoes.find(mcc => mcc.numeroDente === numeroDente)
+        if (marcacao !== undefined) {
+            const EInteiro = marcacoesDenteInteiro.find(mdi => mdi === marcacao.nome) !== undefined
+            if (EInteiro) {
+                document.getElementById('nomeMarcacao').disabled = true
+                document.getElementById('faceDente').disabled = true
+                document.getElementById('informacoesAdicionais').disabled = true
+            } else {
+                document.getElementById('nomeMarcacao').disabled = false
+                document.getElementById('faceDente').disabled = false
+                document.getElementById('informacoesAdicionais').disabled = false
+            }
+        } else {
+            document.getElementById('nomeMarcacao').disabled = false
+            document.getElementById('faceDente').disabled = false
+            document.getElementById('informacoesAdicionais').disabled = false
         }
     }
 
@@ -567,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <input type="color" disabled class="form-control form-control-color" value="${item.cor}">
                     </td>
                     <td>
-                        ${item.faceDente}
+                        ${item.faceDente || 'NÃO SE APLICA'}
                     </td>
                     <td>
                         ${item.informacoesAdicionais || 'NÃO INFORMADO'}
@@ -595,11 +631,14 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param   {Number} faceDente           Parâmetro obrigatório
      */
     window.apagar = (nome, numeroDente, faceDente) => {
-        const procd = marcacoes.find(prc => prc.nome === nome && prc.numeroDente === numeroDente && prc.faceDente === faceDente)
-        marcacoes.splice(marcacoes.indexOf(procd), 1)
+        const EInteiro = marcacoesDenteInteiro.find(mcc => mcc === nome) !== undefined
+        const marcacao = marcacoes.find(prc => prc.nome === nome && prc.numeroDente === numeroDente && (prc.faceDente === faceDente || EInteiro))
+        marcacoes.splice(marcacoes.indexOf(marcacao), 1)
         storage.save(marcacoes)
+        habilitarCamposMarcacao(numeroDente)
         atualizaTabela(numeroDente)
         resizeCanvas()
+        if (marcacoes.filter(marcacao => marcacao.numeroDente === numeroDente).length === 0) oldFillColor = '#fff'
     }
 
     /**
@@ -632,7 +671,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 altura: tamanhoDente / 1.8,
                 largura: index === 0 || index === 15 ? tamanhoDente + posicoesPadrao.margemXEntreDentes : tamanhoDente + 2 * posicoesPadrao.margemXEntreDentes
             })
-
 
             const mapeamentoDente = {
                 position: {
@@ -724,6 +762,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param   {String} cor_interior            Parâmetro obrigatório
      */
     const pintarFace = (contexto, marcacao, cor_linha, cor_interior) => {
+        const EInteiro = marcacoesDenteInteiro.find(mcc => mcc === marcacao.nome) !== undefined
+
         let numeroDente = getOrdemExibicaoPorNumeroDente(marcacao.numeroDente) - 1
         contexto.fillStyle = cor_interior
         contexto.strokeStyle = cor_linha
@@ -742,9 +782,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (numeroDivisoes > 0) dividir = true
 
         let posicaoX = definePosicaoXInicialDente(numeroDente)
-
         /* 1ª zona */
-        if (marcacao.faceDente === 1 && !dividir) {
+        if ((EInteiro || marcacao.faceDente === 1) && !dividir) {
             if (contexto) {
                 contexto.beginPath();
                 contexto.moveTo(posicaoX, posicaoY);
@@ -755,7 +794,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 contexto.fill();
                 contexto.stroke();
             }
-        } else if (marcacao.faceDente === 1 && dividir) {
+        } else if ((EInteiro || marcacao.faceDente === 1) && dividir) {
             if (contexto) {
                 const larguraDivisao = dimensoesTrapezio.baseMaior / (numeroDivisoes + 1)
                 prcdms.forEach((marcacaoItem, divisao) => {
@@ -785,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         /* 2ª zona */
-        if (marcacao.faceDente === 2 && !dividir) {
+        if ((EInteiro || marcacao.faceDente === 2) && !dividir) {
             if (contexto) {
                 contexto.beginPath();
                 contexto.moveTo(dimensoesTrapezio.baseMenor + posicaoX, dimensoesTrapezio.lateral + posicaoY);
@@ -796,7 +835,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 contexto.fill();
                 contexto.stroke();
             }
-        } else if (marcacao.faceDente === 2 && dividir) {
+        } else if ((EInteiro || marcacao.faceDente === 2) && dividir) {
             if (contexto) {
                 const larguraDivisao = dimensoesTrapezio.baseMaior / (numeroDivisoes + 1)
                 prcdms.forEach((marcacaoItem, divisao) => {
@@ -824,7 +863,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         /* 3ª zona */
-        if (marcacao.faceDente === 3 && !dividir) {
+        if ((EInteiro || marcacao.faceDente === 3) && !dividir) {
             if (contexto) {
                 contexto.beginPath();
                 contexto.moveTo(dimensoesTrapezio.lateral + posicaoX, dimensoesTrapezio.baseMenor + posicaoY);
@@ -835,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 contexto.fill();
                 contexto.stroke();
             }
-        } else if (marcacao.faceDente === 3 && dividir) {
+        } else if ((EInteiro || marcacao.faceDente === 3) && dividir) {
             if (contexto) {
                 const larguraDivisao = dimensoesTrapezio.baseMaior / (numeroDivisoes + 1)
                 prcdms.forEach((marcacaoItem, divisao) => {
@@ -864,7 +903,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         /* 4ª zona */
-        if (marcacao.faceDente === 4 && !dividir) {
+        if ((EInteiro || marcacao.faceDente === 4) && !dividir) {
             if (contexto) {
                 contexto.beginPath();
                 contexto.moveTo(posicaoX, posicaoY);
@@ -875,7 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 contexto.fill();
                 contexto.stroke();
             }
-        } else if (marcacao.faceDente === 4 && dividir) {
+        } else if ((EInteiro || marcacao.faceDente === 4) && dividir) {
             if (contexto) {
                 const larguraDivisao = dimensoesTrapezio.baseMaior / (numeroDivisoes + 1)
                 prcdms.forEach((marcacaoItem, divisao) => {
@@ -903,7 +942,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         /* 5ª zona(medio) */
-        if (marcacao.faceDente === 5 && !dividir) {
+        if ((EInteiro || marcacao.faceDente === 5) && !dividir) {
             if (contexto) {
                 contexto.beginPath();
                 contexto.moveTo(dimensoesTrapezio.lateral + posicaoX, dimensoesTrapezio.lateral + posicaoY);
@@ -914,7 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 contexto.fill();
                 contexto.stroke();
             }
-        } else if (marcacao.faceDente === 5 && dividir) {
+        } else if ((EInteiro || marcacao.faceDente === 5) && dividir) {
             if (contexto) {
                 const larguraDivisao = (dimensoesTrapezio.baseMenor - dimensoesTrapezio.lateral) / (numeroDivisoes + 1)
                 prcdms.forEach((marcacaoItem, divisao) => {
@@ -1023,6 +1062,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    const marcacoesDenteInteiro = ['Dente ausente', 'Extração indicada', 'Necessidade de prótese fixa', 'Prótese fixa']
+
     /**
      * Dá o start no odontograma, Desenhando a estrutura, carregando os dados, etc.
      */
@@ -1035,6 +1076,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector("#nomeMarcacao").addEventListener('change', (event) => {
             let marcacao = document.querySelector("#nomeMarcacao")
             if (marcacao.value !== '') {
+                const EInteiro = marcacoesDenteInteiro.find(mcc => mcc === marcacao.value) != undefined
+                if (EInteiro) document.getElementById('faceDente').disabled = true
+                else document.getElementById('faceDente').disabled = false
+
                 marcacao = itensMarcacao.find(problemaAtual => problemaAtual.nome === marcacao.value)
                 document.querySelector("#cor").value = marcacao.cor
                 if (marcacao.nome === 'Outro') {
@@ -1058,10 +1103,11 @@ document.addEventListener('DOMContentLoaded', () => {
             marcacao.faceDente = parseInt(document.querySelector("#faceDente").value)
             marcacao.numeroDente = parseInt(document.getElementById('numeroDente').value)
 
-            marcacao.salvar()
-
-            pintarFace(contexto2, marcacao, 'black', marcacao.cor)
-            atualizaTabela(marcacao.numeroDente)
+            if (marcacao.salvar()) {
+                pintarFace(contexto2, marcacao, 'black', marcacao.cor)
+                habilitarCamposMarcacao(marcacao.numeroDente)
+                atualizaTabela(marcacao.numeroDente)
+            }
         }
 
         marcacoes = storage.fetch()
@@ -1630,8 +1676,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function pintarDenteMarcadoArcada(tooth) {
-        const exists = dentesMarcadosArcada.find(dente => dente === tooth) !== undefined
-        if (!exists) dentesMarcadosArcada.push(dentesMarcadosArcada)
         oldFillColor = 'turquoise'
         tooth['dente'].attr({
             fill: 'turquoise'
@@ -1795,7 +1839,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const numDente = parseInt(denteArcada['texto'][0].textContent)
             document.getElementById('modalLabel').innerText = `Marcações - Dente ${numDente}`
             document.getElementById('numeroDente').value = numDente
+            const marcacao = marcacoes.find(mcc => mcc.numeroDente === numDente)
+            if (marcacao !== undefined) {
+                const EInteiro = marcacoesDenteInteiro.find(mdi => mdi === marcacao.nome) !== undefined
+                if (EInteiro) {
+                    document.getElementById('nomeMarcacao').disabled = true
+                    document.getElementById('faceDente').disabled = true
+                    document.getElementById('informacoesAdicionais').disabled = true
+                } else {
+                    document.getElementById('nomeMarcacao').disabled = false
+                    document.getElementById('faceDente').disabled = false
+                    document.getElementById('informacoesAdicionais').disabled = false
+                }
+            }
             modal.show()
+            habilitarCamposMarcacao(numDente)
             atualizaTabela(numDente)
         }
     })
